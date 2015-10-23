@@ -243,7 +243,7 @@ if ( typeof define === 'function' && define.amd ) {
  */
 
 ;(function () {
-    
+    'use strict';
 
     /**
      * Class for managing events.
@@ -1190,7 +1190,7 @@ if ( typeof define === 'function' && define.amd ) {
 
 ( function( ElemProto ) {
 
-  
+  'use strict';
 
   var matchesMethod = ( function() {
     // check for the standard method name first
@@ -1296,7 +1296,7 @@ if ( typeof define === 'function' && define.amd ) {
 
 ( function( window, factory ) {
   /*global define: false, module: false, require: false */
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -1559,7 +1559,7 @@ return utils;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -1653,7 +1653,7 @@ return Cell;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -1909,19 +1909,12 @@ return proto;
 
 }));
 
-/*!
- * Flickity v1.1.1
- * Touch, responsive, flickable galleries
- *
- * Licensed GPLv3 for open source use
- * or Flickity Commercial License for commercial use
- *
- * http://flickity.metafizzy.co
- * Copyright 2015 Metafizzy
+/**
+ * Flickity main
  */
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -2343,6 +2336,7 @@ Flickity.prototype.select = function( index, isWrap ) {
   if ( !this.isActive ) {
     return;
   }
+  index = parseInt( index, 10 );
   // wrap position so slider is within normal area
   var len = this.cells.length;
   if ( this.options.wrapAround && len > 1 ) {
@@ -2670,7 +2664,7 @@ return Flickity;
 /*global define: false, module: false, require: false */
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -2987,7 +2981,7 @@ return Unipointer;
 
 ( function( window, factory ) {
   /*global define: false, module: false, require: false */
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -3345,7 +3339,7 @@ return Unidragger;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -3718,7 +3712,7 @@ return Flickity;
 
 ( function( window, factory ) {
   /*global define: false, module: false, require: false */
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -3832,7 +3826,7 @@ return TapListener;
 // -------------------------- prev/next button -------------------------- //
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4092,7 +4086,7 @@ return Flickity;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4277,7 +4271,7 @@ return Flickity;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4463,7 +4457,7 @@ return Flickity;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4640,7 +4634,7 @@ return Flickity;
 }));
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4674,7 +4668,7 @@ return Flickity;
   }
 
 }( window, function factory( window, classie, eventie, Flickity, utils ) {
-
+'use strict';
 
 Flickity.createMethods.push('_createLazyload');
 
@@ -4706,12 +4700,13 @@ Flickity.prototype.lazyLoad = function() {
 
 function getCellLazyImages( cellElem ) {
   // check if cell element is lazy image
-  if ( cellElem.nodeName == 'IMG' &&
-    cellElem.getAttribute('data-flickity-lazyload') ) {
+  if ( cellElem.getAttribute('data-flickity-lazyload') ) {
     return [ cellElem ];
   }
+
   // select lazy images in cell
-  var imgs = cellElem.querySelectorAll('img[data-flickity-lazyload]');
+  var imgs = cellElem.querySelectorAll('[data-flickity-lazyload]');
+
   return utils.makeArray( imgs );
 }
 
@@ -4731,8 +4726,16 @@ LazyLoader.prototype.handleEvent = utils.handleEvent;
 LazyLoader.prototype.load = function() {
   eventie.bind( this.img, 'load', this );
   eventie.bind( this.img, 'error', this );
+
   // load image
-  this.img.src = this.img.getAttribute('data-flickity-lazyload');
+  var imgSrc = this.img.getAttribute('data-flickity-lazyload');
+
+  if(this.img.nodeName == 'IMG') {
+    this.img.src = imgSrc;
+  } else {
+    this.img.style.backgroundImage = 'url("' + imgSrc + '")';
+  }
+
   // remove attr
   this.img.removeAttribute('data-flickity-lazyload');
 };
@@ -4741,7 +4744,7 @@ LazyLoader.prototype.onload = function( event ) {
   this.complete( event, 'flickity-lazyloaded' );
 };
 
-LazyLoader.prototype.onerror = function() {
+LazyLoader.prototype.onerror = function( event ) {
   this.complete( event, 'flickity-lazyerror' );
 };
 
@@ -4766,13 +4769,19 @@ return Flickity;
 
 }));
 
-/**
- * Flickity index
- * used for AMD and CommonJS exports
+/*!
+ * Flickity v1.1.1
+ * Touch, responsive, flickable galleries
+ *
+ * Licensed GPLv3 for open source use
+ * or Flickity Commercial License for commercial use
+ *
+ * http://flickity.metafizzy.co
+ * Copyright 2015 Metafizzy
  */
 
 ( function( window, factory ) {
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4813,7 +4822,7 @@ return Flickity;
 
 ( function( window, factory ) {
   /*global define: false, module: false, require: false */
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -4949,7 +4958,7 @@ return Flickity;
  * MIT License
  */
 
-( function( window, factory ) { 
+( function( window, factory ) { 'use strict';
   // universal module definition
 
   /*global define: false, module: false, require: false */
@@ -5288,7 +5297,7 @@ function makeArray( obj ) {
 
 ( function( window, factory ) {
   /*global define: false, module: false, require: false */
-  
+  'use strict';
   // universal module definition
 
   if ( typeof define == 'function' && define.amd ) {
@@ -5316,7 +5325,7 @@ function makeArray( obj ) {
   }
 
 }( window, function factory( window, Flickity, imagesLoaded ) {
-
+'use strict';
 
 Flickity.createMethods.push('_createImagesLoaded');
 
